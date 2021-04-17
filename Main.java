@@ -3,6 +3,13 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
+
+    enum MessageType{
+        PROCESS_OPERATION,
+        WRONG_OPERATION,
+        EXIT_PROGRAM
+    }
+
     public static void main(String[] args) {
 
         Scanner userInput = new Scanner(System.in);
@@ -13,39 +20,53 @@ public class Main {
 
         int selectedOperationNumber = 0;
     
-        boolean successSelection = false;
+        boolean keepSelection = true;
         
-        while (!successSelection){
+        while (keepSelection){
             
             buildOperationMenu(operationList);
             
             selectedOperationNumber = userInput.nextInt();
 
-            if ((selectedOperationNumber > 0) && ((selectedOperationNumber - 1) <  operationList.size())) successSelection = true;
-            else showFinalMessage(successSelection);
+            if (selectedOperationNumber == 0) keepSelection = false;
+
+            else if ((selectedOperationNumber > 0) && ((selectedOperationNumber - 1) <  operationList.size())) {
+                
+                Operation selectedOperation = operationList.get(selectedOperationNumber - 1);
+
+                showSelectedOperation(selectedOperation);
+            }
+            else showMessage(MessageType.WRONG_OPERATION);
         }
         
-        Operation selectedOperation = operationList.get(selectedOperationNumber - 1);
 
-        showSelectedOperation(selectedOperation);
-
-        showFinalMessage(successSelection);
+        showMessage(MessageType.EXIT_PROGRAM);
 
         userInput.close();
     }
 
     private static void showSelectedOperation(Operation selectedOperation) {
+        
         System.out.println("");
         System.out.println("The selected operation is " + selectedOperation.name);
         System.out.println(selectedOperation.description + " | " + selectedOperation.command);
-        System.out.println("");
+        showMessage(MessageType.PROCESS_OPERATION);
     }
 
-    private static void showFinalMessage(boolean successSelection) {
+    private static void showMessage(MessageType msgType) {
         System.out.println("");
-        if (successSelection) System.out.println("The system will proccess your command. Have a nice day and relax.");
 
-        else System.out.println("The operation you mentioned doesn't exist");
+        switch (msgType){
+            case PROCESS_OPERATION: 
+                System.out.println("The system will proccess your command. Have a rest and relax.");
+                break;
+            case WRONG_OPERATION:
+                System.out.println("The operation you choose doesn't exist");
+                break;
+            case EXIT_PROGRAM:
+                System.out.println("Have a nice day! Good-bye!");
+                break;
+        }
 
         System.out.println("");
     }
@@ -58,11 +79,14 @@ public class Main {
     }
 
     private static void buildOperationMenu(List<Operation> operationList) {
+        System.out.println("-------------------------------------");
         System.out.println("Select the operation by typing its #:");
         System.out.println("");
         for (Operation operation : operationList) {
             System.out.println(operation.number + " - " + operation.name);
         }
+        System.out.println("OR");
+        System.out.println("0 - Exit to the program");
         System.out.println("");
         System.out.print("Operation #:");
     }
