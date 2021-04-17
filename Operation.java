@@ -11,4 +11,11 @@ public class Operation {
         command = operationCommand;
     }
 
+    public void showDetails(){
+        System.out.println("");
+        System.out.println("The operation name is " + this.name);
+        System.out.println(this.description);
+        System.out.println("The command is '" + this.command + "'");
+    }
+
 }

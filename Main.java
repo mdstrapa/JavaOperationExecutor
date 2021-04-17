@@ -13,14 +13,19 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner userInput = new Scanner(System.in);
+        int selectedOperationNumber = 0;
+        int selectedExecutorNumber = 0;
+        Operation selectedOperation;
+        Executor selectedExecutor;
+        boolean keepSelection = true;
+        boolean operationResult;
+
+        
+        List<Operation> operationList = createOperationList();
+        List<Executor> executorList = createExecutorList();
+        List<Execution> executionLog = new ArrayList<Execution>();
 
         showGreetings();
-
-        List<Operation> operationList = createOperationList();
-
-        int selectedOperationNumber = 0;
-    
-        boolean keepSelection = true;
         
         while (keepSelection){
             
@@ -32,9 +37,22 @@ public class Main {
 
             else if ((selectedOperationNumber > 0) && ((selectedOperationNumber - 1) <  operationList.size())) {
                 
-                Operation selectedOperation = operationList.get(selectedOperationNumber - 1);
+                selectedOperation = operationList.get(selectedOperationNumber - 1);
+           
+                showAvailableExecutors(executorList);
+                
+                selectedExecutorNumber = userInput.nextInt();
 
-                showSelectedOperation(selectedOperation);
+                selectedExecutor = executorList.get(selectedExecutorNumber - 1);
+
+                selectedOperation.showDetails();
+
+                operationResult = selectedExecutor.executeOperation(selectedOperation, executionLog);
+
+                executionLog.get(executionLog.size() - 1).showDetails();
+
+
+
             }
             else showMessage(MessageType.WRONG_OPERATION);
         }
@@ -43,14 +61,6 @@ public class Main {
         showMessage(MessageType.EXIT_PROGRAM);
 
         userInput.close();
-    }
-
-    private static void showSelectedOperation(Operation selectedOperation) {
-        
-        System.out.println("");
-        System.out.println("The selected operation is " + selectedOperation.name);
-        System.out.println(selectedOperation.description + " | " + selectedOperation.command);
-        showMessage(MessageType.PROCESS_OPERATION);
     }
 
     private static void showMessage(MessageType msgType) {
@@ -86,12 +96,13 @@ public class Main {
             System.out.println(operation.number + " - " + operation.name);
         }
         System.out.println("OR");
-        System.out.println("0 - Exit to the program");
+        System.out.println("0 - Exit the program");
         System.out.println("");
         System.out.print("Operation #:");
     }
 
     private static List<Operation> createOperationList() {
+    
         Operation createTicket = new Operation(1,"Create Ticket","This operation creates a ticket in USD","usd -addTicket -I -Default");
         Operation closeTicket = new Operation(2,"Close Ticket","This operation closes a ticket in USD","usd -closeTicket -T %");
         Operation changeTicketStatus = new Operation(3,"Change Ticket Status","This operation changes a ticket status in USD","usd -chgStatus -T %");
@@ -104,5 +115,28 @@ public class Main {
         operationList.add(changeTicketStatus);
         operationList.add(changeTicketDescriptoion);
         return operationList;
+    }
+
+    private static List<Executor> createExecutorList(){
+        Executor executor1 = new Executor(1, "Runs on USA");
+        Executor executor2 = new Executor(2, "Runs on Brazil");
+
+        List<Executor> executorList = new ArrayList<Executor>();
+        executorList.add(executor1);
+        executorList.add(executor2);
+        return executorList;
+    }
+
+
+    private static void showAvailableExecutors(List<Executor> executorList){
+        System.out.println("--------------------------------------------");
+        System.out.println("Choose the desired executor by typing its #:");
+        System.out.println("");
+        for (Executor executor : executorList) {
+            System.out.println(executor.id + " - " + executor.description);
+        }
+        System.out.println("");
+        System.out.print("Executor #:");
+
     }
 }
