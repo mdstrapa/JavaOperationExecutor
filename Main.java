@@ -17,7 +17,7 @@ public class Main {
         int selectedExecutorNumber = 0;
         Operation selectedOperation;
         Executor selectedExecutor;
-        boolean keepSelection = true;
+        boolean exitProgram = false;
         boolean operationResult;
 
         
@@ -27,13 +27,17 @@ public class Main {
 
         showGreetings();
         
-        while (keepSelection){
+        while (!exitProgram){
             
-            buildOperationMenu(operationList);
+            buildMenu(operationList);
             
             selectedOperationNumber = userInput.nextInt();
 
-            if (selectedOperationNumber == 0) keepSelection = false;
+            if (selectedOperationNumber == 0) exitProgram = true;
+
+            else if (selectedOperationNumber == 99) showExecutionLog(executionLog);
+
+            else if (selectedOperationNumber == 98) createOperation(operationList);
 
             else if ((selectedOperationNumber > 0) && ((selectedOperationNumber - 1) <  operationList.size())) {
                 
@@ -50,11 +54,10 @@ public class Main {
                 operationResult = selectedExecutor.executeOperation(selectedOperation, executionLog);
 
                 executionLog.get(executionLog.size() - 1).showDetails();
-
-
-
             }
             else showMessage(MessageType.WRONG_OPERATION);
+
+            if (!exitProgram) pressAnyKeyToContinue();
         }
         
 
@@ -82,21 +85,25 @@ public class Main {
     }
 
     private static void showGreetings() {
-        System.out.println("=====================");
-        System.out.println("Java Operation Reader");
-        System.out.println("=====================");
+        System.out.println("=====================================");
+        System.out.println("       Java Operation Executor       ");
+        System.out.println("=====================================");
         System.out.println("");
     }
 
-    private static void buildOperationMenu(List<Operation> operationList) {
+    private static void buildMenu(List<Operation> operationList) {
         System.out.println("-------------------------------------");
-        System.out.println("Select the operation by typing its #:");
+        System.out.println("Select the option by typing its #:");
         System.out.println("");
+        System.out.println("Operations:");
         for (Operation operation : operationList) {
-            System.out.println(operation.number + " - " + operation.name);
+            System.out.println(operation.number + "   -   " + operation.name);
         }
-        System.out.println("OR");
-        System.out.println("0 - Exit the program");
+        System.out.println("");
+        System.out.println("More options:");
+        System.out.println("98  -   Add a new operation");
+        System.out.println("99  -   Check execution log");
+        System.out.println("0   -   Exit the program");
         System.out.println("");
         System.out.print("Operation #:");
     }
@@ -127,16 +134,83 @@ public class Main {
         return executorList;
     }
 
-
     private static void showAvailableExecutors(List<Executor> executorList){
         System.out.println("--------------------------------------------");
         System.out.println("Choose the desired executor by typing its #:");
         System.out.println("");
         for (Executor executor : executorList) {
-            System.out.println(executor.id + " - " + executor.description);
+            System.out.println(executor.id + "   -   " + executor.description);
         }
         System.out.println("");
         System.out.print("Executor #:");
+
+    }
+
+    private static void showExecutionLog(List<Execution> executionLog){
+        System.out.println("");
+        System.out.println("Execution Log:");
+        System.out.println("");
+        System.out.println("Date                          |  Operation                     |  Command                       |  Executor");
+        System.out.println("---------------------------------------------------------------------------------------------------------------------------------");
+
+        if (executionLog.size() > 0 ){
+            for (Execution execution : executionLog) {
+                System.out.println(
+                    formatStringForExecutionLog(execution.datetime.toString()) + "|  " + 
+                    formatStringForExecutionLog(execution.operation.name) + "|  " + 
+                    formatStringForExecutionLog(execution.operation.command) + "|  " + 
+                    formatStringForExecutionLog(execution.executor.description))
+                ;
+            }
+            System.out.println("");
+            System.out.println(executionLog.size() + " operations have been executed so far.");
+        }else{
+            System.out.println("No operation has been executed so far.");
+        }
+
+        System.out.println("");
+    }
+
+    private static String formatStringForExecutionLog(String field){
+        int expectedFieldSize = 30;
+        String space = "";
+        for(int c = 0;c < (expectedFieldSize - field.length());c++){
+            space = space + " ";
+        }
+        return field + space;
+    }
+
+    private static void pressAnyKeyToContinue(){ 
+        System.out.println("");
+        System.out.println("Press ENTER key to continue...");
+        try
+        {
+            System.in.read();
+        }  
+        catch(Exception e)
+        {}  
+    }
+
+    private static void createOperation(List<Operation> operationList){
+        Scanner userInput = new Scanner(System.in);
+
+        String operationName,operationDescription,operationCommand;
+
+        System.out.println("");
+        System.out.println("Create new operation:");
+        System.out.println("");
+        System.out.print("Type the operation name: ");
+        operationName = userInput.nextLine();
+        System.out.print("Type the operation description: ");
+        operationDescription = userInput.nextLine();
+        System.out.print("Type the operation command: ");
+        operationCommand = userInput.next();
+
+        Operation newOperation = new Operation(operationList.size() + 1, operationName, operationDescription, operationCommand);
+
+        operationList.add(newOperation);
+
+        userInput.close();
 
     }
 }

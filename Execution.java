@@ -13,7 +13,7 @@ public class Execution {
 
     public void showDetails(){
         System.out.println("");
-        System.out.println("An operation was executed by executor # " + this.executor.id);
+        System.out.println("The operation was executed by executor # " + this.executor.id);
         System.out.println("Execution details: ");
         System.out.println("- Date: " + this.datetime);
         System.out.println("- Operation Name: " + this.operation.name);
