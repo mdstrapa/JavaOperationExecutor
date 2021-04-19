@@ -3,6 +3,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
+    
+    
+    static Scanner userInput = new Scanner(System.in);
 
     enum MessageType{
         PROCESS_OPERATION,
@@ -12,7 +15,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Scanner userInput = new Scanner(System.in);
         int selectedOperationNumber = 0;
         int selectedExecutorNumber = 0;
         Operation selectedOperation;
@@ -192,7 +194,7 @@ public class Main {
     }
 
     private static void createOperation(List<Operation> operationList){
-        Scanner userInput = new Scanner(System.in);
+        
 
         String operationName,operationDescription,operationCommand;
 
@@ -204,13 +206,20 @@ public class Main {
         System.out.print("Type the operation description: ");
         operationDescription = userInput.nextLine();
         System.out.print("Type the operation command: ");
-        operationCommand = userInput.next();
+        operationCommand = userInput.nextLine();
 
-        Operation newOperation = new Operation(operationList.size() + 1, operationName, operationDescription, operationCommand);
+        System.out.println("");
 
-        operationList.add(newOperation);
+        try{
+            Operation newOperation = new Operation(operationList.size() + 1, operationName, operationDescription, operationCommand);
+    
+            operationList.add(newOperation);
+    
+            System.out.println("The new operation was succesfully created!");
+        }catch (Exception e){
+            System.out.println("There was an error on trying to create the new operation.");
+        }
 
-        userInput.close();
 
     }
 }
